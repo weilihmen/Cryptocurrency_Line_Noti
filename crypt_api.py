@@ -53,13 +53,13 @@ def check_updates(last_updates,raised):
 	i=0
 	while i<len(last_updates)-1:
 		for r in raised:
+			last_updates.append(r)
 			if last_updates[i]['symbol']==r['symbol']:
-				last_updates.append(r)
 				if r['last_updated']>last_updates[i]['last_updated']:
 					last_updates.pop(i)
 					print('replace')
 				else:
-					raised.pop(r)
+					raised.pop(r) ##找到序列再刪除
 					print('send')
 		i=i+1
 	return last_updates,raised
