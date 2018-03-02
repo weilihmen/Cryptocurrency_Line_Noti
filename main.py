@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: UTF-8 -*-
 import json
 import schedule
 import time
@@ -31,7 +29,7 @@ def noti(data):
     srt=""
     for l in i:
       srt+=l+":"+i[l]+","
-    print("send:",srt.rstrip(","))    
+    print("send:",srt.rstrip(",")) 
     line_bot_api.push_message(your_id, TextSendMessage(text=srt.rstrip(",")))
   return True
 
