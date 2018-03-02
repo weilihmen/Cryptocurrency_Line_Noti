@@ -5,28 +5,28 @@ import json
 def rank_200():
 	req = requests.request('GET', 'https://api.coinmarketcap.com/v1/ticker/?convert=TWD')
 	req2 = requests.request('GET', 'https://api.coinmarketcap.com/v1/ticker/?convert=TWD&start=100&limit=100')
-	new_data = json.loads(req.text)
+	data = json.loads(req.text)
 	for coin in json.loads(req2.text):
-		new_data.append(coin)
-	return new_data
+		data.append(coin)
+	return data
 
 #取得一小時內漲與跌最大的幣種(以Rank為範圍)
 #num取排行的數量、group_size為rank的範圍
-def rising_and_falling(data,num,group_size):
-	group_data=data[:(group_size-1)]
-	newlist = sorted(group_data, key=lambda x: (float(x["percent_change_1h"]) >= 0, (float(x["percent_change_1h"])))) 
-	return newlist[-(num):],newlist[:num]
+def rising_and_falling(data,top_size,rank_size):
+	new_data=data[:(rank_size-1)]
+	newlist = sorted(new_data, key=lambda x: (float(x["percent_change_1h"]) >= 0, (float(x["percent_change_1h"])))) 
+	return list(reversed(newlist[-(top_size):])),list(reversed(newlist[:top_size]))
 
 #取得特定幣種資訊 filters放入幣種簡稱
-def selected_group(data,filters):
+def selected_group(data,sets):
 	selected=[]
 	recognized=[]
 	for coin in data:
-		for name in filters:
+		for name in sets:
 			if coin['symbol']==name:
 				selected.append(coin)
 				recognized.append(name)
-	for name in filters:
+	for name in sets:
 		if name not in recognized:
 			print("Alert: Unknown",name)
 	return selected
@@ -46,11 +46,11 @@ def price_zone(data,condition):
 
 #到價通知後 讀入前一次push紀錄(避免重複push)
 #比對資訊，return:更新的push紀錄 與 需要傳送的資料
-def check_updates(last_updates,raised):
+def check_updates(data,new_data):
 	deletes_a=[]
 	deletes_b=[]
-	for l in last_updates:
-		for r in raised:
+	for l in data:
+		for r in new_data:
 			if l['symbol']==r['symbol']:
 				if int(l['last_updated'])==int(r['last_updated']):
 					deletes_b.append(r)
@@ -60,10 +60,10 @@ def check_updates(last_updates,raised):
 					pass
 			pass
 	for d in deletes_a:
-		last_updates.remove(d)
+		data.remove(d)
 	for d in deletes_b:
-		raised.remove(d)
-	for r in raised:
-		last_updates.append(r)
-	return last_updates,raised
+		new_data.remove(d)
+	for r in new_data:
+		data.append(r)
+	return data,new_data
 
