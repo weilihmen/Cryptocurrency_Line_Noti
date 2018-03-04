@@ -17,7 +17,7 @@ with open("data/setting.txt", "r") as json_file:
   params_3=setting[3]["params_3"]
 
 #讀入LINE BOT序號
-with open("data/line_bot_secrets_test.txt", "r") as json_file:
+with open("data/line_bot_secrets.txt", "r") as json_file:
   secrets = json.load(json_file)
   channel_access_token =secrets[0]["Secret"]
   your_id=secrets[0]["ID"]
