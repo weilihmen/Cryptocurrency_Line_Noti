@@ -55,7 +55,6 @@ def mode1_job():
   raised=crypt_api.price_zone(selected,params_1)
   #如果有到價通知，再做下一步
   if raised:
-    print("Peace({0})".format(time.strftime("%Y/%m/%d %H:%M")))
     #讀取mode1的push紀錄(避免重複push)
     with open('data/mode1_data.txt', 'r') as json_file:
       data = json.load(json_file)
@@ -63,10 +62,13 @@ def mode1_job():
       if sends:
         message=parse("到價通知",sends)
         noti(message)
+        print("完成到價通知(",time.strftime("%Y/%m/%d %H:%M"),")")
+      else:
+        print("無到價通知(",time.strftime("%Y/%m/%d %H:%M"),")")
     with open('data/mode1_data.txt', 'w') as json_file:
       json_file.write(json.dumps(updates))
   else:
-    print
+    print("無到價通知(",time.strftime("%Y/%m/%d %H:%M"),")")
 
 #模式二
 def mode2_job():
